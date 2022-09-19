@@ -1,64 +1,84 @@
-let y = 100;
-let x;
-let x1;
-let z = 100;
-let timer = 0;
+let x1 = 200;
+let xspeed1 = 3;
+let y1 = 300;
+let yspeed1 = 3;
 let ost1 = 0;
+let x2 = 400;
+let xspeed2 = 3;
+let y2 = 300;
+let yspeed2 = 3;
 let ost2 = 0;
+let timer = 0;
 
-let oste = [[400,400],[200,200]]
+var oste = [[400,400],[200,200]];
 
-function setup() {
-  createCanvas(512, 512);
-  strokeWeight(10);
+function setup() 
+{ 
+  createCanvas(600, 600);
+  strokeWeight(5);
+} 
+function draw() { 
+ background(204); 
+   
+  for (var i = 0; i < oste.length; i++){
+    ost(oste[i][0],oste[i][1], i);
+  }
   
-  x = random(0,width)
-  x1 = random(10,width)
-}
-
-function draw() {
-  background(204);
-  for (let i = 0; i < oste.length; i++) {
-    ost1(oste[i][0],oste[i],[1],i);
-  }  
-  if (keyIsDown(LEFT_ARROW)) {
-    x -= 5;
+  //player 1
+  if (keyIsPressed){
+    if ((key == 'w') || (key == 'W')) { 
+      y1 -= yspeed1;
+    } 
+    if ((key == 's') || (key == 'S')) { 
+      y1 += yspeed1;
+    } 
+    if ((key == 'a') || (key == 'A')) { 
+       x1 -= xspeed1;
+    } 
+    if ((key == 'd') || (key == 'D')) { 
+      x1 += xspeed1;
+    } 
   }
-
-  if (keyIsDown(RIGHT_ARROW)) {
-    x += 5;
-  }
-
-  if (keyIsDown(UP_ARROW)) {
-    y -= 5;
-  }
-
-  if (keyIsDown(DOWN_ARROW)) {
-    y += 5;
-  }
-
-  clear();
-  circle(x, y, 100);
-  rect(x1,z,50,50)
-  if (keyIsDown(87)) {
-    z -= 5;
-  }
-  if (keyIsDown(83)) {
-    z += 5;
-  }
-  if (keyIsDown(68)) {
-    x1 += 5;
-  }
-  if (keyIsDown(65)) {
-    x1 -= 5;
-  }
-  timer++;
-  if(timer == 300) {
-    timer = 0;
-    oste.push([random(0,width),random(0,height)]);
-  } 
-  text("player 1: " + ost1, 10, 10);
-  text("player 2: " + ost2, 530, 10);
-
+  ellipse(x1, y1, 50, 50);
+  
  
+   
+  //player 2
+  if (keyIsPressed){
+    if (keyCode == UP_ARROW) { 
+      y2 -= yspeed2;
+    } 
+    if (keyCode == DOWN_ARROW) { 
+      y2 += yspeed2;
+    } 
+    if (keyCode == LEFT_ARROW) { 
+      x2 -= xspeed2;
+    } 
+    if (keyCode == RIGHT_ARROW) { 
+      x2 += xspeed2;
+    } 
+  }
+  rect(x2, y2, 50, 50);
+
+  
+  timer++;
+  if (timer == 300) {
+    timer = 0; 
+    oste.push([random(0,width),random(0,height)]);
+  }
+  
+  text("Player 1: " + ost1, 10, 10);
+  text("Player 2: " + ost2, 530, 10);
+} 
+
+function ost(x, y, i) {
+  point(x,y);
+  if (((x1+50 > x) && (x  > x1-50)) && ((y1+50 > y) && (y  > y1-50))) {
+    oste.splice(i,1);
+    ost1++;
+  }
+  if (((x2+50 > x) && (x  > x2-50)) && ((y2+50 > y) && (y  > y2-50))) {
+    oste.splice(i,1);
+    ost2++;
+  }
 }
