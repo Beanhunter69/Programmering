@@ -41,13 +41,11 @@ if (y1 > y ){
 if (x1 > x ){
   x1--
 }
-if(x1 > x && y1 > y && x1 < x && y1 < y ){
-  x=0;
-  y=0;
+if(2 > dist(x1,y1,x,y)){
 noLoop(); 
 }
 }
 function preload() {
-  img = loadImage('mus.png');
-  img2 = loadImage('katten.png');
+  img = loadImage('jerrymus.png');
+  img2 = loadImage('kat.png');
  }
