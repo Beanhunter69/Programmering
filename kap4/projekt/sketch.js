@@ -20,6 +20,7 @@ function draw() {
   background(220);
   image(img, x, y, d, d);
   borderCheck();
+  // Når bordercheck er inde under draw så går den ned og kører hele function brodercheck for hvert frame som function draw gør. a
   //musen
   if (keyIsDown(87)) {
     y -= 5;
@@ -33,6 +34,7 @@ function draw() {
   if (keyIsDown(65)) {
     x -= 5;
   } // denne del af koden giver bevæglese til musen når man trykker på wasd
+  // grunden til at der ikke står w a s og d er fordi de tal som der står er deres keycode som betyder at man kan bruge dem til nogen forskellige variabler.
   //katten
   image(img2, x1, y1, d, d);
   if (x1 < x) {
@@ -68,25 +70,7 @@ function draw() {
     if (40 > dist(x2, y2, x, y)) {
       noLoop();
     } // denne del giver katten 2 bevæglese så den bevæger sig efter musen
-  } //katten 3
-  if (timer > 10 * 70) {
-    image(img3, x2, y2, d, d);
-    if (x2 < x) {
-      x2++;
-    }
-    if (y2 < y) {
-      y2++;
-    }
-    if (y2 > y) {
-      y2--;
-    }
-    if (x2 > x) {
-      x2--;
-    }
-    if (40 > dist(x2, y2, x, y)) {
-      noLoop();
-    }
-    // denne del giver katten 3 bevæglese så den bevæger sig efter musen
+    // der er nogen if statements indeni katten 2 som siger at hvis x2 < x så skal x2 blive plusset med 2 osv. med det andre følgende koder.
   }
   timer++;
 }
@@ -112,6 +96,6 @@ function borderCheck() {
   if (y - d / 2 < 0) {
     x -= 2;
     y += 2;
-    // denne kode er den som skal virke som en border. det den går er at den siger så snart den begynder at ramme borderen så trækker den figuren ind mod midten igen
+    // denne kode er den som skal virke som en border. det den går er at den siger så snart den begynder at ramme borderen så trækker den figuren den modsatte retning
   }
 }
