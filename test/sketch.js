@@ -18,3 +18,17 @@ function draw() {
   }
   endShape();
 }
+if (button_2.mousePressed(Værdi)) {
+  let y = 
+  let h = a*x*x+b*x+c-(x-(mouseX-width/2)**2+(y-(mouseY-height/2)))
+  let Dh = 2*a*x+2*(mouseX-width/2)+b-2*x
+  x1 = x - h/Dh
+  console.log(h);
+}
+for(let i = 0; i<10; i++) {
+  let y = b+sqrt((-a)**2+2*x*a+r**2-x**2)
+  let h = a*x*x+b*x+c-(x-(mouseX-width/2)**2+(y-(mouseY-height/2)))
+  let Dh = 2*a*x+2*(mouseX-width/2)+b-2*x
+  x1 = x - h/Dh
+  console.log(x1);
+}
