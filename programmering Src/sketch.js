@@ -1,6 +1,6 @@
 //! det her er globale funktioner som bliver brugt i både i setup og draw funktionerne.
 let a, b, c;
-let x, x1;
+let x, x_gæt;
 let input, input_2, input_3, input_4, button;
 let quad;
 let r = 50;
@@ -21,6 +21,7 @@ function setup() {
   button_2.position(input_4.x + input_4.width, input_4.y);
   button_2.mousePressed(Værdi);
   cirkel = new lowerCircle(mouseX, mouseY, 50);
+  cirkel_2 = new uppercircle(mouseX, mouseY, 50);
   quad = new quadfunction(1, 0, 0);
 }
 class circle {
@@ -40,56 +41,57 @@ class lowerCircle extends circle {
   constructor(x, y, r) {
     super(x, y, r);
   }
-  Fx(x) {
+  Fx(x_gæt) {
     return (
       (mouseY - height / 2 - 0.5) * -1 +
       sqrt(
         (mouseX - width / 2) ** 2 +
-          2 * x * (mouseX - width / 2) +
+          2 * x_gæt * (mouseX - width / 2) +
           50 ** 2 -
-          x ** 2
+          x_gæt ** 2
       )
     );
   }
-
-  dFx(x) {
-    2 * mouseX -
+  dFx(x_gæt) {
+    return (
+      2 * mouseX -
       width / 2 -
-      ((2 * x) / 2) *
+      ((2 * x_gæt) / 2) *
         sqrt(
           (mouseX - width / 2) ** 2 +
-            2 * x * (mouseX - width / 2) +
+            2 * x_gæt * (mouseX - width / 2) +
             50 ** 2 -
-            x ** 2
-        );
+            x_gæt ** 2
+        )
+    );
   }
 }
 class uppercircle extends circle {
   constructor(x, y, r) {
     super(x, y, r);
   }
-  Fx(x) {
+  Fx_2(x_gæt) {
     return (
       (mouseY - height / 2 - 0.5) * -1 -
       sqrt(
         (mouseX - width / 2) ** 2 +
-          2 * x * (mouseX - width / 2) +
+          2 * x_gæt * (mouseX - width / 2) +
           r ** 2 -
-          x ** 2
+          x_gæt ** 2
       )
     );
   }
 
-  dFx(x) {
+  dFx_2(x_gæt) {
     return (
       2 * mouseX -
       width / 2 -
-      ((2 * x) / 2) *
+      ((2 * x_gæt) / 2) *
         sqrt(
           (mouseX - width / 2) ** 2 +
-            2 * x * (mouseX - width / 2) +
+            2 * x_gæt * (mouseX - width / 2) +
             r ** 2 -
-            x ** 2
+            x_gæt ** 2
         )
     );
   }
@@ -100,11 +102,11 @@ class quadfunction {
     this.b = b;
     this.c = c;
   }
-  gx(x) {
-    return a * x * x + b * x + c;
+  gx(x_gæt) {
+    return a * x_gæt * x_gæt + b * x_gæt + c;
   }
-  dgx(x) {
-    return 2 * a * x + b;
+  dgx(x_gæt) {
+    return 2 * a * x_gæt + b;
   }
 
   show() {
@@ -150,14 +152,14 @@ function abc_værdi() {
   input_3.value("");
 }
 function Værdi() {
-  x = parseFloat(input_4.value());
+  x_gæt = parseFloat(input_4.value());
   input_4.value("");
 }
 function NewtonRaphson(x) {
-  for (let i = 0; i < 10; i++) {
-    let x1 = x - (cirkel.Fx(x) - quad.gx(x)) / (cirkel.dFx(x) - quad.dgx(x));
-    x = x1;
-  }
-  console.log(cirkel.dFx(x));
+  let x1 =
+    x_gæt -
+    (cirkel.Fx(x_gæt) - quad.gx(x_gæt)) / (cirkel.dFx(x_gæt) - quad.dgx(x_gæt));
+  x = x1;
+  console.log(cirkel.dFx(x_gæt));
   return x;
 }
