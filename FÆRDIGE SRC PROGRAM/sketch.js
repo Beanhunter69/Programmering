@@ -3,6 +3,7 @@ let x, x_gæt, x_NR; //* dette er vores x'er som vi bruger til vores Newton raph
 let input, input_2, input_3, input_4, button, option; //* dette er vores globale værdier til vores input, button og option
 let ligning, lineær_ligning, cirkel; //* detter er vores globale værdier for vores ligninger så vi kan tilgå dem overalt
 let graf = "ligning"; //* Dette er til at vi kan skifte mellem at lave en andengradsligning og en lineær funktion
+let py_1;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -195,7 +196,6 @@ function draw() {
     lineær_ligning.b = b;
     lineær_ligning.show();
   }
-  strokeWeight(2);
   noFill(0);
   //* denne del viser bare vores upper og lower -cirkel
   mus.x = mouseX - width / 2;
@@ -238,7 +238,7 @@ function skrift_graf() {
  * @param {number} ligning.dgx(x_gæt-x4) detter er vores afledte funktion til vores andengradsligning
  *
  */
-//? formlen fra denne class er noget som vi både har lært fra timerne men jeg har også create inspire på mat a htx bogen https://mathtxa.systime.dk/?id=500
+//? formlen fra disse class er noget som vi både har lært fra timerne men jeg har også create inspire på mat a htx bogen https://mathtxa.systime.dk/?id=500
 function NewtonRaphson(x) {
   let x1 =
     x_gæt -
@@ -260,6 +260,7 @@ function NewtonRaphson(x) {
  * @param {number} ligning.gx(x_gæt-x4) dette er vores funktion til vores andengradsligning
  * @param {number} ligning.dgx(x_gæt-x4) detter er vores afledte funktion til vores andengradsligning
  */
+//? formlen fra disse class er noget som vi både har lært fra timerne men jeg har også create inspire på mat a htx bogen https://mathtxa.systime.dk/?id=500
 function NR(x_NR) {
   let x_1 =
     x_gæt -
