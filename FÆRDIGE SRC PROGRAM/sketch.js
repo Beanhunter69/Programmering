@@ -27,6 +27,7 @@ function setup() {
   mus = new upperCirkel(mouseX, mouseY, 50);
   mus_2 = new lowerCirkel(mouseX, mouseY, 50);
   //* her laver vi option så vi kan skrifte mellem lineær og andengrad
+  //? Dette stykke kode er tage fra p5 reference i createselect https://p5js.org/reference/#/p5/createSelect
   option = createSelect();
   option.position(20, 175);
   option.option("ligning");
@@ -34,6 +35,8 @@ function setup() {
   option.changed(skrift_graf);
 }
 //* her har vi vores andengrad class hvor vi difinere hvad en andengradsligning er og giver den funktioner
+//? alt det nedenstående omkring class er inspireret en smule fra kap 10 i vores bog https://github.com/HenrikSterner/P5Programmering/blob/main/kap10/kap10.md
+//? Det skal også siges at jeg har fået lidt hjælp fra Vitus A omkring skabtelsen af far og søn klasserne
 class andengradsligning {
   constructor(a, b, c) {
     this.a = a;
@@ -157,6 +160,7 @@ function draw() {
   textSize(20);
   fill(0);
   //* Denne del er noget som tjekker skæringen med x aksen på vores ligning
+  //? Denne formel er taget fra vores matematik bog i kapitlet 8.3 omrking parablers skæring med x-aksen https://matbhtx.systime.dk/?id=1384
   let skæring_x1 = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
   let skæring_x2 = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
   //* Dette skriver alt på vores skærm når vi kører programmet
@@ -171,6 +175,7 @@ function draw() {
   text("C", 5, 152);
 
   //* denne funktion translater hele vores skærm sådan at vi får vores (0,0) midt på skærmen
+  //? Dette er inspiret af aske som fortalte mig hvordan man kunne sætte (0,0) i midten af skærmen
   translate(width / 2, height / 2);
   //* dette skriver hvor cirkels midtpunkts koordinator
   textSize(50);
@@ -200,8 +205,9 @@ function draw() {
   mus_2.y = mouseY - height / 2;
   mus_2.show();
 }
-//* denne funktion gør sådan at når man indtaster noget i vores input så sætter den vores variabler til de tal vi så for
+//* denne funktion gør sådan at når man indtaster noget i vores input så gør parseFloat den til et tal.
 //! ParseFloat er en funktion som gør at når vi indtaster vores værdi så sætter den vores variable til vores tal.
+//? parsefloat har jeg fået fra W3school da jeg fandt ud af jeg ikke kunne bruge int https://www.w3schools.com/jsref/jsref_parsefloat.asp
 function abc_værdi() {
   a = parseFloat(input.value());
   b = parseFloat(input_2.value());
@@ -210,14 +216,17 @@ function abc_værdi() {
   input_2.value("");
   input_3.value("");
 }
-//* Dette er fra vores option som siger at vores graf er lig med vores option value
-function skrift_graf() {
-  graf = option.value();
-}
 //* dette gør præcis det samme som i vores abc_værdi bare med vores x
+//? parsefloat har jeg fået fra W3school da jeg fandt ud af jeg ikke kunne bruge int https://www.w3schools.com/jsref/jsref_parsefloat.asp
 function x_værdi() {
   x_gæt = parseFloat(input_4.value());
   input_4.value("");
+}
+//* Dette er fra vores option som siger at vores graf er lig med vores option value
+//? hører sammen med Createselect
+//? parsefloat har jeg fået fra W3school da jeg fandt ud af jeg ikke kunne bruge int https://www.w3schools.com/jsref/jsref_parsefloat.asp
+function skrift_graf() {
+  graf = option.value();
 }
 /**
  * Denne funktion er vores newton raphson som skal udregne vores skæringspunkter
@@ -229,6 +238,7 @@ function x_værdi() {
  * @param {number} ligning.dgx(x_gæt-x4) detter er vores afledte funktion til vores andengradsligning
  *
  */
+//? formlen fra denne class er noget som vi både har lært fra timerne men jeg har også create inspire på mat a htx bogen https://mathtxa.systime.dk/?id=500
 function NewtonRaphson(x) {
   let x1 =
     x_gæt -
