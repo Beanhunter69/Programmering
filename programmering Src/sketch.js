@@ -1,11 +1,13 @@
-//! det her er globale funktioner som bliver brugt i både i setup og draw funktionerne.
-let a, b, c;
-let x, x_gæt;
-let input, input_2, input_3, input_4, button;
-let quad;
-let r = 50;
+let a, b, c, r; //* dette er værdier til vores andengradsligning og vores cirkel
+let x, x_gæt, x_NR; //* dette er vores x'er som vi bruger til vores Newton raphson
+let input, input_2, input_3, input_4, button, option; //* dette er vores globale værdier til vores input, button og option
+let ligning, lineær_ligning, cirkel; //* detter er vores globale værdier for vores ligninger så vi kan tilgå dem overalt
+let graf = "ligning"; //* Dette er til at vi kan skifte mellem at lave en andengradsligning og en lineær funktion
+let py_1;
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  //* laver input felt og indsætter værdierne man skriver ind
   input = createInput();
   input.position(20, 65);
   input_2 = createInput();
@@ -13,136 +15,199 @@ function setup() {
   input_3 = createInput();
   input_3.position(20, 135);
   input_4 = createInput();
-  input_4.position(20, 700);
+  input_4.position(20, 400);
   button = createButton("submit");
   button.position(input_3.x + input.width, 135);
   button.mousePressed(abc_værdi);
-  button_2 = createButton("submit x");
-  button_2.position(input_4.x + input_4.width, input_4.y);
-  button_2.mousePressed(Værdi);
-  cirkel = new lowerCircle(mouseX, mouseY, 50);
-  cirkel_2 = new uppercircle(mouseX, mouseY, 50);
-  quad = new quadfunction(1, 0, 0);
+  button_2 = createButton("submit");
+  button_2.position(input_4.x + input.width, 400);
+  button_2.mousePressed(x_værdi);
+  //* dette skaber vores classer og laver dem til objekter
+  ligning = new andengradsligning(a, b, c);
+  lineær_ligning = new lineær(a, b);
+  mus = new upperCirkel(mouseX, mouseY, 50);
+  mus_2 = new lowerCirkel(mouseX, mouseY, 50);
+  //* her laver vi option så vi kan skrifte mellem lineær og andengrad
+  //? Dette stykke kode er tage fra p5 reference i createselect https://p5js.org/reference/#/p5/createSelect
+  option = createSelect();
+  option.position(20, 175);
+  option.option("ligning");
+  option.option("lineær_ligning");
+  option.changed(skrift_graf);
 }
-class circle {
+//* her har vi vores andengrad class hvor vi difinere hvad en andengradsligning er og giver den funktioner
+//? alt det nedenstående omkring class er inspireret en smule fra kap 10 i vores bog https://github.com/HenrikSterner/P5Programmering/blob/main/kap10/kap10.md
+//? Det skal også siges at jeg har fået lidt hjælp fra Vitus A omkring skabtelsen af far og søn klasserne
+class andengradsligning {
+  constructor(a, b, c) {
+    this.a = a;
+    this.b = b;
+    this.c = c;
+  }
+  //* dette er vores funktion
+  gx(x_gæt) {
+    return a * x_gæt ** 2 + b * x_gæt + c;
+  }
+  //* dette er vores afledte funktion
+  dgx(x_gæt) {
+    return 2 * a * x_gæt + b;
+  }
+  show() {
+    noFill(0);
+    beginShape();
+    for (let x = -100; x <= 100; x++) {
+      let y = a * x * x + b * x + c;
+      vertex(x, -y);
+    }
+    endShape();
+  }
+}
+//* Denne class laver vi vores cirkel
+//! Dette er også hvad vi kalder for en parent/far class
+class Cirkel {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
     this.r = r;
   }
   show() {
-    strokeWeight(4);
-    noFill();
     ellipse(this.x, this.y, this.r);
   }
 }
-
-class lowerCircle extends circle {
+//* Dette er vores uppercirkel som er en udvidelse af cirkel hvori vi også giver den en funktion og en afledt funktion
+//! Dette er hvad vi kalder en child/søn class
+class upperCirkel extends Cirkel {
   constructor(x, y, r) {
     super(x, y, r);
   }
+  //* dette er vores funktion
   Fx(x_gæt) {
     return (
       (mouseY - height / 2 - 0.5) * -1 +
       sqrt(
-        (mouseX - width / 2) ** 2 +
+        -((mouseX - width / 2) ** 2) +
           2 * x_gæt * (mouseX - width / 2) +
-          50 ** 2 -
+          25 ** 2 -
           x_gæt ** 2
       )
     );
   }
+  //* dette er vores afledte funktion
   dFx(x_gæt) {
-    return (
-      2 * mouseX -
-      width / 2 -
-      ((2 * x_gæt) / 2) *
+    return -(
+      (2 * (mouseX - width / 2) - 2 * x_gæt) /
+      (2 *
         sqrt(
-          (mouseX - width / 2) ** 2 +
+          -((mouseX - width / 2) ** 2) +
             2 * x_gæt * (mouseX - width / 2) +
-            50 ** 2 -
+            25 ** 2 -
             x_gæt ** 2
-        )
+        ))
     );
   }
 }
-class uppercircle extends circle {
+//* dette er det samme som vores upperclass det er en udvidet class af cirkel.
+//! dette er også en child/søn class
+class lowerCirkel extends Cirkel {
   constructor(x, y, r) {
     super(x, y, r);
   }
-  Fx_2(x_gæt) {
+  //* dette er vores funktion
+  Fx(x_gæt) {
     return (
       (mouseY - height / 2 - 0.5) * -1 -
       sqrt(
-        (mouseX - width / 2) ** 2 +
+        -((mouseX - width / 2) ** 2) +
           2 * x_gæt * (mouseX - width / 2) +
-          r ** 2 -
+          25 ** 2 -
           x_gæt ** 2
       )
     );
   }
-
-  dFx_2(x_gæt) {
-    return (
-      2 * mouseX -
-      width / 2 -
-      ((2 * x_gæt) / 2) *
+  //* dette er vores afledte funktion
+  dFx(x_gæt) {
+    return -(
+      (2 * (mouseX - width / 2) - 2 * x_gæt) /
+      (2 *
         sqrt(
-          (mouseX - width / 2) ** 2 +
+          -((mouseX - width / 2) ** 2) +
             2 * x_gæt * (mouseX - width / 2) +
-            r ** 2 -
+            25 ** 2 -
             x_gæt ** 2
-        )
+        ))
     );
   }
 }
-class quadfunction {
-  constructor(a, b, c) {
+//* dette er en lineær class hvor vi angiver hvad en lineær funktion er
+class lineær {
+  constructor(a, b) {
     this.a = a;
     this.b = b;
-    this.c = c;
   }
-  gx(x_gæt) {
-    return a * x_gæt * x_gæt + b * x_gæt + c;
-  }
-  dgx(x_gæt) {
-    return 2 * a * x_gæt + b;
-  }
-
   show() {
-    strokeWeight(4);
-    noFill();
+    strokeWeight(2);
+    noFill(0);
     beginShape();
-    for (let x = -100; x <= 100; x++) {
-      let y = this.a * x * x + this.b * x + this.c;
-      vertex(x + 0, -y + 0);
+    for (let x = -1000; x <= 1000; x++) {
+      let y = a * x + b;
+      vertex(x, -y);
     }
     endShape();
   }
 }
 
 function draw() {
-  NewtonRaphson();
   background(220);
-  strokeWeight(1);
-  textSize(50);
+  textSize(20);
   fill(0);
-  text(mouseX - width / 2, 300, 720);
-  text((mouseY - height / 2 - 0.5) * -1, 450, 720);
+  //* Denne del er noget som tjekker skæringen med x aksen på vores ligning
+  //? Denne formel er taget fra vores matematik bog i kapitlet 8.3 omrking parablers skæring med x-aksen https://matbhtx.systime.dk/?id=1384
+  let skæring_x1 = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
+  let skæring_x2 = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
+  //* Dette skriver alt på vores skærm når vi kører programmet
+  //! den skriver også alle vores beregninger på skærmen
+  text("NR er ca = " + NewtonRaphson(x), 10, 750);
+  text("andet skæringspunkt ca =" + NR(x_NR), 10, 700);
+  text("skæring med x " + skæring_x1, 10, 600);
+  text("skæring med x " + skæring_x2, 10, 650);
+  text("instats dine andengradsligning her ", 10, 50);
+  text("A", 5, 82);
+  text("B", 5, 118);
+  text("C", 5, 152);
+
+  //* denne funktion translater hele vores skærm sådan at vi får vores (0,0) midt på skærmen
+  //? Dette er inspiret af aske som fortalte mig hvordan man kunne sætte (0,0) i midten af skærmen
   translate(width / 2, height / 2);
-  quad.a = a;
-  quad.b = b;
-  quad.c = c;
-  quad.show();
-  strokeWeight(2);
-  cirkel.x = mouseX - width / 2;
-  cirkel.y = mouseY - height / 2;
-  cirkel.show();
-  scale(1, -1);
-  strokeWeight(2);
+  //* dette skriver hvor cirkels midtpunkts koordinator
+  textSize(50);
+  text(mouseX - width / 2, 500, 350);
+  text((mouseY - height / 2 - 0.5) * -1, 650, 350);
   line(0, -500, 0, 500);
   line(1000, 0, -1000, 0);
+  //* denne funktion afgør hvis vores option siger den er ligning at den så skal vise vores andengrad og hvis den er lineær skal den vise vores lineær funktion
+  if (graf === "ligning") {
+    ligning.a = a;
+    ligning.b = b;
+    ligning.c = c;
+    ligning.show();
+  }
+  if (graf === "lineær_ligning") {
+    lineær_ligning.a = a;
+    lineær_ligning.b = b;
+    lineær_ligning.show();
+  }
+  noFill(0);
+  //* denne del viser bare vores upper og lower -cirkel
+  mus.x = mouseX - width / 2;
+  mus.y = mouseY - height / 2;
+  mus.show();
+  mus_2.x = mouseX - width / 2;
+  mus_2.y = mouseY - height / 2;
+  mus_2.show();
 }
+//* denne funktion gør sådan at når man indtaster noget i vores input så gør parseFloat den til et tal.
+//! ParseFloat er en funktion som gør at når vi indtaster vores værdi så sætter den vores variable til vores tal.
+//? parsefloat har jeg fået fra W3school da jeg fandt ud af jeg ikke kunne bruge int https://www.w3schools.com/jsref/jsref_parsefloat.asp
 function abc_værdi() {
   a = parseFloat(input.value());
   b = parseFloat(input_2.value());
@@ -151,15 +216,68 @@ function abc_værdi() {
   input_2.value("");
   input_3.value("");
 }
-function Værdi() {
+//* dette gør præcis det samme som i vores abc_værdi bare med vores x
+//? parsefloat har jeg fået fra W3school da jeg fandt ud af jeg ikke kunne bruge int https://www.w3schools.com/jsref/jsref_parsefloat.asp
+function x_værdi() {
   x_gæt = parseFloat(input_4.value());
   input_4.value("");
 }
+//* Dette er fra vores option som siger at vores graf er lig med vores option value
+//? hører sammen med Createselect
+//? parsefloat har jeg fået fra W3school da jeg fandt ud af jeg ikke kunne bruge int https://www.w3schools.com/jsref/jsref_parsefloat.asp
+function skrift_graf() {
+  graf = option.value();
+}
+/**
+ * Denne funktion er vores newton raphson som skal udregne vores skæringspunkter
+ * @param {number} x_gæt er vores gæt som vi indsætter i ovre funktion
+ * @param {number} x1 - x5 er en del af vores newton raphson og er bare iterationer
+ * @param {number} mus.Fx(x_gæt-x4) er vores funktion for vores øvre cirkel
+ * @param {number} mus.dFx(x_gæt-x4) dette er vores afledte funktion til vores øvre cirkel
+ * @param {number} ligning.gx(x_gæt-x4) dette er vores funktion til vores andengradsligning
+ * @param {number} ligning.dgx(x_gæt-x4) detter er vores afledte funktion til vores andengradsligning
+ *
+ */
+//? formlen fra disse class er noget som vi både har lært fra timerne men jeg har også create inspire på mat a htx bogen https://mathtxa.systime.dk/?id=500
 function NewtonRaphson(x) {
   let x1 =
     x_gæt -
-    (cirkel.Fx(x_gæt) - quad.gx(x_gæt)) / (cirkel.dFx(x_gæt) - quad.dgx(x_gæt));
-  x = x1;
-  console.log(cirkel.dFx(x_gæt));
+    (mus.Fx(x_gæt) - ligning.gx(x_gæt)) / (mus.dFx(x_gæt) - ligning.dgx(x_gæt));
+  let x2 = x1 - (mus.Fx(x1) - ligning.gx(x1)) / (mus.dFx(x1) - ligning.dgx(x1));
+  let x3 = x2 - (mus.Fx(x2) - ligning.gx(x2)) / (mus.dFx(x2) - ligning.dgx(x2));
+  let x4 = x3 - (mus.Fx(x3) - ligning.gx(x3)) / (mus.dFx(x3) - ligning.dgx(x3));
+  let x5 = x4 - (mus.Fx(x4) - ligning.gx(x4)) / (mus.dFx(x4) - ligning.dgx(x4));
+  x = x5;
   return x;
+}
+/**
+ * Denne funktion er præcis den samme som Newton raphson det er bare nogen andre funktioner
+ * @param {number} x_NR er det samme som x oppe i newton raphson
+ * @param {number} x_gæt er vores gæt som vi indsætter i ovre funktion
+ * @param {number} x_1 - x_5 er en del af vores newton raphson og er bare iterationer
+ * @param {number} mus_2.Fx(x_gæt-x4) er vores funktion for vores nedre cirkel
+ * @param {number} mus_2.dFx(x_gæt-x4) dette er vores afledte funktion til vores nedre cirkel
+ * @param {number} ligning.gx(x_gæt-x4) dette er vores funktion til vores andengradsligning
+ * @param {number} ligning.dgx(x_gæt-x4) detter er vores afledte funktion til vores andengradsligning
+ */
+//? formlen fra disse class er noget som vi både har lært fra timerne men jeg har også create inspire på mat a htx bogen https://mathtxa.systime.dk/?id=500
+function NR(x_NR) {
+  let x_1 =
+    x_gæt -
+    (mus_2.Fx(x_gæt) - ligning.gx(x_gæt)) /
+      (mus_2.dFx(x_gæt) - ligning.dgx(x_gæt));
+  let x_2 =
+    x_1 -
+    (mus_2.Fx(x_1) - ligning.gx(x_1)) / (mus_2.dFx(x_1) - ligning.dgx(x_1));
+  let x_3 =
+    x_2 -
+    (mus_2.Fx(x_2) - ligning.gx(x_2)) / (mus_2.dFx(x_2) - ligning.dgx(x_2));
+  let x_4 =
+    x_3 -
+    (mus_2.Fx(x_3) - ligning.gx(x_3)) / (mus_2.dFx(x_3) - ligning.dgx(x_3));
+  let x_5 =
+    x_4 -
+    (mus_2.Fx(x_4) - ligning.gx(x_4)) / (mus_2.dFx(x_4) - ligning.dgx(x_4));
+  x_NR = x_5;
+  return x_NR;
 }

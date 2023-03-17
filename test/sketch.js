@@ -1,88 +1,44 @@
-//! det her er globale funktioner som bliver brugt i både i setup og draw funktionerne.
-let a = 0.5;
-let b = 7;
-let c = 20;
-let x, x1, x_gæt;
-let input_4, button_2;
-let quad;
-let r = 50;
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  cirkel = new lowerCircle(mouseX, mouseY, 50);
-  quad = new quadfunction(1, 0, 0);
-  input_4 = createInput();
-  input_4.position(20, 700);
-  button_2 = createButton("submit x");
-  button_2.position(input_4.x + input_4.width, input_4.y);
-  button_2.mousePressed(Værdi);
-}
-class circle {
-  constructor(x, y, r) {
-    this.x = x;
-    this.y = y;
-    this.r = r;
-  }
-  show() {
-    ellipse(this.x, this.y, this.r);
-  }
-}
+let a = 200; // cirkelcentrets x-koordinat
+let b = 200; // cirkelcentrets y-koordinat
+let r = 100; // cirkelens radius
+let x0 = 50; // startværdi for x-koordinatet af skæringspunktet
+let y0 = 50; // startværdi for y-koordinatet af skæringspunktet
 
-class lowerCircle extends circle {
-  constructor(x, y, r) {
-    super(x, y, r);
-  }
-  Fx(x_gæt) {
-    return (
-      (mouseY - height / 2 - 0.5) * -1 +
-      sqrt(
-        (mouseX - width / 2) ** 2 +
-          2 * x_gæt * (mouseX - width / 2) +
-          50 ** 2 -
-          x_gæt ** 2
-      )
-    );
-  }
-  dFx(x_gæt) {
-    return (
-      2 * mouseX -
-      width / 2 -
-      ((2 * x_gæt) / 2) *
-        sqrt(
-          (mouseX - width / 2) ** 2 +
-            2 * x_gæt * (mouseX - width / 2) +
-            50 ** 2 -
-            x_gæt ** 2
-        )
-    );
-  }
-}
-class quadfunction {
-  constructor(a, b, c) {
-    this.a = a;
-    this.b = b;
-    this.c = c;
-  }
-  gx(x_gæt) {
-    return 0.5 * x_gæt * x_gæt + 7 * x_gæt + 20;
-  }
-  dgx(x_gæt) {
-    return 2 * 0.5 * x_gæt + 7;
-  }
+function setup() {
+  createCanvas(400, 400);
 }
 
 function draw() {
-  NewtonRaphson();
   background(220);
-}
-function Værdi() {
-  x_gæt = parseFloat(input_4.value());
-  input_4.value("");
-}
-function NewtonRaphson(x) {
-  let x1 =
-    x_gæt -
-    (cirkel.Fx(x_gæt) - quad.gx(x_gæt)) / (cirkel.dFx(x_gæt) - quad.dgx(x_gæt));
-  x = x1;
-  console.log(x);
-  return x;
+
+  // Tegn cirklen
+  stroke(0);
+  noFill();
+  circle(a, b, r * 2);
+
+  // Tegn linjen
+  let A = 1;
+  let B = -1;
+  let C = -50;
+  stroke(0, 0, 255);
+  line(0, -C / B, width, (-C - A * width) / B);
+
+  // Find skæringspunktet med Newton-Raphson-metoden
+  for (let i = 0; i < 10; i++) {
+    let dx =
+      (2 * (x0 - a) + 2 * (y0 - b) * (-A / B)) /
+      (2 * (-A / B) * (y0 - b) + 2 * (x0 - a));
+    let dy = (-A / B) * dx;
+    x0 = dx;
+    y0 = dy;
+  }
+
+  // Tegn skæringspunktet
+  fill(255, 0, 0);
+  circle(x0, y0, 10);
+
+  // Vis koordinaterne for skæringspunktet
+  textSize(16);
+  fill(0);
+  text(`Skæringspunkt: (${x0.toFixed(2)}, ${y0.toFixed(2)})`, 10, height - 20);
 }
