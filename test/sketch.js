@@ -1,8 +1,12 @@
-let a = 200; // cirkelcentrets x-koordinat
-let b = 200; // cirkelcentrets y-koordinat
-let r = 100; // cirkelens radius
-let x0 = 50; // startværdi for x-koordinatet af skæringspunktet
-let y0 = 50; // startværdi for y-koordinatet af skæringspunktet
+let a = 0.1; // Koefficient for x^2
+let b = 0; // Koefficient for x
+let c = -1; // Konstant led
+let r = 25; // Radius for cirklen
+let h = 35; // x-koordinat for cirkelcenter
+let k = 45; // y-koordinat for cirkelcenter
+let x0 = 40; // Startpunkt for Newton-Raphson-metoden
+let eps = 0.0001; // Præcision
+let maxIterations = 100; // Maksimalt antal iterationer
 
 function setup() {
   createCanvas(400, 400);
@@ -10,35 +14,45 @@ function setup() {
 
 function draw() {
   background(220);
-
+  
   // Tegn cirklen
   stroke(0);
   noFill();
-  circle(a, b, r * 2);
-
-  // Tegn linjen
-  let A = 1;
-  let B = -1;
-  let C = -50;
+  circle(h, k, r*2);
+  
+  // Tegn andengradsligningen
   stroke(0, 0, 255);
-  line(0, -C / B, width, (-C - A * width) / B);
-
-  // Find skæringspunktet med Newton-Raphson-metoden
-  for (let i = 0; i < 10; i++) {
-    let dx =
-      (2 * (x0 - a) + 2 * (y0 - b) * (-A / B)) /
-      (2 * (-A / B) * (y0 - b) + 2 * (x0 - a));
-    let dy = (-A / B) * dx;
-    x0 = dx;
-    y0 = dy;
+  for(let x=0; x<=width; x++) {
+    let y = a*x*x + b*x + c;
+    point(x, height - y);
   }
-
+  
+  // Find skæringspunktet ved hjælp af Newton-Raphson-metoden
+  let x = x0;
+  let i = 0;
+  while(i < maxIterations) {
+    let fx = a*x*x + b*x + c - Math.sqrt(r*r - (x-h)*(x-h)) - k;
+    let dfx = 2*a*x + (h-x) / Math.sqrt(r*r - (x-h)*(x-h));
+    let x1 = x - fx / dfx;
+    if(Math.abs(x1 - x) < eps) {
+      x = x1;
+      break;
+    }
+    x = x1;
+    i++;
+  }
+  
   // Tegn skæringspunktet
+  let y1 = Math.sqrt(r*r - (x-h)*(x-h)) + k;
+  let y2 = -Math.sqrt(r*r - (x-h)*(x-h)) + k;
   fill(255, 0, 0);
-  circle(x0, y0, 10);
-
-  // Vis koordinaterne for skæringspunktet
+  noStroke();
+  circle(x, height - y1, 5);
+  circle(x, height - y2, 5);
+  
+  // Udskriv koordinaterne for skæringspunktet
   textSize(16);
   fill(0);
-  text(`Skæringspunkt: (${x0.toFixed(2)}, ${y0.toFixed(2)})`, 10, height - 20);
+  text("Skæringspunktet: (" + x.toFixed(2) + ", " + y1.toFixed(2) + ")", 10, 20);
+  text("Skæringspunktet: (" + x.toFixed(2) + ", " + y2.toFixed(2) + ")", 10, 40);
 }
